@@ -58,6 +58,33 @@ function create_an_array_of_the_xml_nodes(root)
     return result
 end
 
+function bla()
+    println("Called")
+    vg = VariantGraphNode[]
+    startNode = StartNode()
+    push!(vg, startNode)
+
+    vgedges = []
+    last_node = startNode
+
+    all_nodes = create_an_array_of_the_xml_nodes(root)
+    for node in all_nodes
+        if typeof(node) == String
+            println(node)
+            # here we want to create a text node for in the variant hypergraph
+            textNode = TextNode()
+            push!(vg, startNode)
+            # add an extra edge
+            push!(vgedges, (last_node, textNode))
+            last_node = textNode
+        elseif typeof(node) == ETree
+            println(node.name)
+        end
+    end
+
+    # create end node
+end
+
 
 xml = "<xml>Mondays are <del>well good</del><add>def bad</add>!</xml>"
 # the_streaming_way_of_doing_things()
@@ -88,23 +115,9 @@ abstract type VariantGraphNode end
 struct TextNode <: VariantGraphNode end
 struct StartNode <: VariantGraphNode end
 
-vg = VariantGraphNode[]
-push!(vg, StartNode())
+bla()
 
 
-
-
-
-
-
-all_nodes = create_an_array_of_the_xml_nodes(root)
-for node in all_nodes
-    if typeof(node) == String
-        println(node)
-    elseif typeof(node) == ETree
-        println(node.name)
-    end
-end
 
 
 
