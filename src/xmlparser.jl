@@ -12,18 +12,29 @@ struct Container
     id::Int64
 end
 
+function the_streaming_way_of_doing_things()
+    tag_name = "test"
+    L = []
+    cb = XPCallbacks()
+    cb.start_element = function (h, name, attrs)
+        c = Container(name, 123)
+        push!(L, c)
+        return c
+    end
 
-xml = "<xml> text </xml>"
+    parse(xml, cb)
+    print(L)
 
-
-tag_name = "test"
-L = []
-cb = XPCallbacks()
-cb.start_element = function (h, name, attrs)
-    c = Container(name, 123)
-    push!(L, c)
-    return c
 end
 
-parse(xml, cb)
-print(L)
+xml = "<xml> text </xml>"
+# the_streaming_way_of_doing_things()
+
+
+
+
+
+
+
+
+
