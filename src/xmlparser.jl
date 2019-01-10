@@ -30,8 +30,17 @@ end
 xml = "<xml> text </xml>"
 # the_streaming_way_of_doing_things()
 
+root = xp_parse(xml)
+# dump(root)
+
+# ik moet een methode hebben die gewoon over alle elements itereert.
+# maar het eerste etree element is al meteen de root..
+# Zijn er traversals ofzo?
 
 
+for a in root.elements
+    println(a)
+end
 
 
 
