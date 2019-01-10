@@ -6,6 +6,7 @@ xmlparser:
 =#
 
 using LibExpat
+using DataStructures
 
 struct Container
     name::String
@@ -59,10 +60,35 @@ struct StartNode <: VariantGraphNode end
 vg = VariantGraphNode[]
 push!(vg, StartNode())
 
+#TODO: dit moet recursief om alle elementen te processen...
+# ik hou niet zo van recursie, kan dat echt niet anders?
+# Er zijn wel generators in julia
+# lightxml liberary lijkt wel een iterator te hebben
+# dat is ook alleen maar van de directe kinderen
+# misschien een priority queue vullen?
+# waarbij bij het aflopen van de queue steeds weer nodes op de queue worden gezet.
 
-for a in root.elements
+
+# We zetten alle kinderen van de root op een deck
+# daarna halen we er steeds 1 op
+# Mocht dat een element zijn
+# dan zetten we de kinderen daarvan weer op de deck.
+
+deck = deque(Union{AbstractString, ETree})
+for element in root.elements
+    push!(deck, element)
+end
+println(deck)
+
+while !isempty(deck)
+    a = popfirst!(deck)
     if typeof(a) == String
         println(a)
+    elseif typeof(a) == ETree
+        println(a)
+        for element in reverse(a.elements)
+            pushfirst!(deck, element)
+        end
     end
 end
 
