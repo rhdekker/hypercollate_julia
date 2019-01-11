@@ -45,11 +45,11 @@ function create_an_array_of_the_xml_nodes(root)
     push!(deck, root)
 
     while !isempty(deck)
-        a = popfirst!(deck)
+        a = pop!(deck)
         push!(result, a)
         if typeof(a) == ETree
             for element in reverse(a.elements)
-                pushfirst!(deck, element)
+                push!(deck, element)
             end
         end
     end
