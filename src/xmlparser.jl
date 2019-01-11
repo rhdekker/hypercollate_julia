@@ -131,6 +131,12 @@ function convert_to_xml_blocks(all_nodes)
     return xml_blocks
 end
 
+function is_xml_block_textual_variation_or_not(xml_block)
+    # TODO: this should really be a constant
+    variation_tags = ["del", "add"]
+    return xml_block.tag in variation_tags
+end
+
 function main()
     xml = "<xml>Mondays are <del>well good</del><add>def bad</add>!</xml>"
     root = xp_parse(xml)
@@ -139,6 +145,9 @@ function main()
     all_nodes = create_an_array_of_the_xml_nodes(root)
     blocks = convert_to_xml_blocks(all_nodes)
     println(blocks)
+    for block in blocks
+        println(is_xml_block_textual_variation_or_not(block))
+    end
 end
 
 main()
