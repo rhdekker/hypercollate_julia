@@ -20,6 +20,10 @@ mutable struct XMLBlock
     tail::String
 end
 
+# type to group xml_blocks together
+mutable struct Group
+    blocks::Array{XMLBlock}
+end
 
 # traverse all nodes of the XML tree in depth first fashion
 # without recursion
@@ -68,6 +72,7 @@ end
 
 function is_xml_block_textual_variation_or_not(xml_block)
     # TODO: this should really be a constant
+    # TODO: maybe also better to make it a set, depending on the size
     variation_tags = ["del", "add"]
     return xml_block.tag in variation_tags
 end
@@ -76,17 +81,43 @@ end
 
 
 
-
-function partition_block_into_groups(all_nodes)
+# NOTE: this should probably be done with a fold
+# Basically what happens here is that I turn an array into an array of arrays, also
+# known as a tree :-).
+function partition_block_into_groups(all_block)
+    groups = []
     # we willen over alle nodes lopen steeds per twee, dus we houden een previous bij..
     previous = undef
-    for node in all_nodes
+    for block in all_block
         if previous == undef
-            previous = node
+            previous = block
+            # create a new group for the first block
+            group = Group([])
+            # and add the block to the group
+            push!(group.blocks, block)
+            # add the group to the result
+            push!(groups, group)
             continue
         end
         # hmm dit doe ik niet goed
+        # compare an aspect of the current block with the previous block
+        # if the aspect is different, but it in a new block
+        # otherwise
+        a = is_xml_block_textual_variation_or_not(previous)
+        b = is_xml_block_textual_variation_or_not(block)
+
+        if (a == b)
+            # voeg toe aan de vorige group
+            previous_group = last(groups)
+            push!(previous_group.blocks, block)
+        else
+            group = Group([])
+            push!(group.blocks, block)
+            push!(groups, group)
+        end
+        previous = block
     end
+    return groups
 end
 
 
@@ -98,9 +129,8 @@ function main()
     all_nodes = create_an_array_of_the_xml_nodes(root)
     blocks = convert_to_xml_blocks(all_nodes)
     println(blocks)
-    for block in blocks
-        println(is_xml_block_textual_variation_or_not(block))
-    end
+    partitions = partition_block_into_groups(blocks)
+    println(partitions)
 end
 
 main()
