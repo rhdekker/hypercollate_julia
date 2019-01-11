@@ -8,6 +8,19 @@ xmlparser:
 using LibExpat
 using DataStructures
 
+# variant graph types and structs
+abstract type VariantGraphNode end
+struct TextNode <: VariantGraphNode end
+struct StartNode <: VariantGraphNode end
+
+# xml types and structs
+mutable struct XMLBlock
+    tag::String
+    content::String
+    tail::String
+end
+
+
 struct Container
     name::String
     id::Int64
@@ -83,21 +96,69 @@ function bla(all_nodes)
 end
 
 
-abstract type VariantGraphNode end
-struct TextNode <: VariantGraphNode end
-struct StartNode <: VariantGraphNode end
 
 
+
+
+function convert_later(all_nodes)
+    # we willen over alle nodes lopen steeds per twee, dus we houden een previous bij..
+    previous = undef
+    for node in all_nodes
+        if previous == undef
+            previous = node
+            continue
+        end
+        # hmm dit doe ik niet goed
+    end
+end
+
+function convert_to_xml_blocks(all_nodes)
+    xml_blocks = []
+    for node in all_nodes
+        if typeof(node) == ETree
+            xml_block = XMLBlock(node.name, "", "")
+            push!(xml_blocks, xml_block)
+        else
+            # node is a String
+            xml_block = last(xml_blocks)
+            if xml_block.content == ""
+                xml_block.content = node
+            else
+                xml_block.tail = node
+            end
+        end
+    end
+    return xml_blocks
+end
 
 function main()
     xml = "<xml>Mondays are <del>well good</del><add>def bad</add>!</xml>"
-    # the_streaming_way_of_doing_things()
-
     root = xp_parse(xml)
     # dump(root)
 
     all_nodes = create_an_array_of_the_xml_nodes(root)
-    bla(all_nodes)
+    blocks = convert_to_xml_blocks(all_nodes)
+    println(blocks)
+end
+
+main()
+
+
+
+    # Ik wil over de nodes lopen en die op een andere manier bij elkaar groeperen zodat
+    # het werken met mixed content xml niet meer zo onvoorspelbaar is.
+    # Mixed content XML is in te delen in blokken met (tag, attr, textual content en tail textual content)
+    # Deze constructie heb ik voor het eerst gezien in de XML parser van Python
+    # Deze aanpak heeft voor en nadelen, maar in dit geval kan het zorgen voor een voorspelbare structuur
+    # op basis waarvan we verdere bewerkingen kunnen doen.
+
+
+
+
+
+
+
+
 
     # OUDE comments
     # ik moet een methode hebben die gewoon over alle elements itereert.
@@ -119,12 +180,6 @@ function main()
     # of een liberary daarvoor gebruiken
     # mijn eerste gevoel is om het gewoon even zelf te doen
     # even wat simpele structs te definieren
-end
-
-main()
-
-
-
 
 
 
