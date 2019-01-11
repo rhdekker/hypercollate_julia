@@ -21,6 +21,8 @@ mutable struct XMLBlock
 end
 
 # type to group xml_blocks together
+# The groups are not really necessary... Since they only contain the array
+# they are a bit redundant.
 mutable struct Group
     blocks::Array{XMLBlock}
 end
@@ -84,6 +86,9 @@ end
 # NOTE: this should probably be done with a fold
 # Basically what happens here is that I turn an array into an array of arrays, also
 # known as a tree :-).
+# NOTE: There is a group by function in JuliaCollections / IterTools.jl
+# but this function only looks at one element at the time
+# there must be another function that groups elements into (previous, current) tuples.
 function partition_block_into_groups(all_block)
     groups = []
     # we willen over alle nodes lopen steeds per twee, dus we houden een previous bij..
@@ -106,6 +111,8 @@ function partition_block_into_groups(all_block)
         a = is_xml_block_textual_variation_or_not(previous)
         b = is_xml_block_textual_variation_or_not(block)
 
+        # TODO: here we also need to check whether there is trialing text
+        # if there is trailing text in a then they can not be placed in the same group
         if (a == b)
             # voeg toe aan de vorige group
             previous_group = last(groups)
