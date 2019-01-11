@@ -42,9 +42,7 @@ end
 function create_an_array_of_the_xml_nodes(root)
     result = Union{AbstractString, ETree}[]
     deck = deque(Union{AbstractString, ETree})
-    for element in root.elements
-        push!(deck, element)
-    end
+    push!(deck, root)
 
     while !isempty(deck)
         a = popfirst!(deck)
