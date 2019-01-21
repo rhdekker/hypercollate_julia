@@ -95,10 +95,10 @@ function create_nodes_for_each_xml_block(xml_blocks::Array{XMLBlock})
     return nodes
 end
 
-function transform_block_into_text_nodes(block::XMLBlock)
-    nodes::Array{TextNode} = []
-        !isempty(block.content) && push!(nodes, TextNode(block.content))
-        !isempty(block.tail) && push!(nodes, TextNode(block.tail))
+function transform_block_into_text_nodes(block::XMLBlock)::Array{TextNode}
+    nodes = []
+    !isempty(block.content) && push!(nodes, TextNode(block.content))
+    !isempty(block.tail) && push!(nodes, TextNode(block.tail))
     return nodes
 end
 
