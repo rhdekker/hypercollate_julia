@@ -10,8 +10,10 @@ using DataStructures
 
 # variant graph types and structs
 abstract type VariantGraphNode end
-struct TextNode <: VariantGraphNode end
 struct StartNode <: VariantGraphNode end
+struct TextNode <: VariantGraphNode
+    content::String
+end
 
 # xml types and structs
 mutable struct XMLBlock
@@ -54,7 +56,7 @@ function create_an_array_of_the_xml_nodes(root)
 end
 
 function convert_to_xml_blocks(all_nodes)
-    xml_blocks = []
+    xml_blocks::Array{XMLBlock} = []
     for node in all_nodes
         if typeof(node) == ETree
             xml_block = XMLBlock(node.name, "", "")
@@ -81,6 +83,18 @@ end
 
 
 
+# we hebben een fuctie nodig die bij elk xml block ervoor zorgt
+# dat er nodes worden aangemaakt.
+# dat is dus per xml block 1 of 2 text nodes
+function create_nodes_for_each_xml_block(xml_blocks::Array{XMLBlock})
+    nodes::Array{TextNode} = []
+    for block in xml_blocks
+        !isempty(block.content) && push!(nodes, TextNode(block.content))
+        !isempty(block.tail) && push!(nodes, TextNode(block.tail))
+    end
+    return nodes
+end
+
 
 
 # NOTE: this should probably be done with a fold
@@ -89,6 +103,7 @@ end
 # NOTE: There is a group by function in JuliaCollections / IterTools.jl
 # but this function only looks at one element at the time
 # there must be another function that groups elements into (previous, current) tuples.
+# Or is it a take until problem?
 function partition_block_into_groups(all_block)
     groups = []
     # we willen over alle nodes lopen steeds per twee, dus we houden een previous bij..
@@ -136,8 +151,12 @@ function main()
     all_nodes = create_an_array_of_the_xml_nodes(root)
     blocks = convert_to_xml_blocks(all_nodes)
     println(blocks)
-    partitions = partition_block_into_groups(blocks)
-    println(partitions)
+
+    textNodes = create_nodes_for_each_xml_block(blocks)
+    println(textNodes)
+    # de partities doen we later wel.
+    #partitions = partition_block_into_groups(blocks)
+    #println(partitions)
 end
 
 main()
