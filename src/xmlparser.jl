@@ -95,6 +95,12 @@ function create_nodes_for_each_xml_block(xml_blocks::Array{XMLBlock})
     return nodes
 end
 
+function transform_block_into_text_nodes(block::XMLBlock)
+    nodes::Array{TextNode} = []
+        !isempty(block.content) && push!(nodes, TextNode(block.content))
+        !isempty(block.tail) && push!(nodes, TextNode(block.tail))
+    return nodes
+end
 
 
 # NOTE: this should probably be done with a fold
@@ -152,8 +158,20 @@ function main()
     blocks = convert_to_xml_blocks(all_nodes)
     println(blocks)
 
-    textNodes = create_nodes_for_each_xml_block(blocks)
-    println(textNodes)
+    # We mappen de XML blocks naar een combo van tag en nul of meer text nodes.
+
+    tuples_of_tag_and_text_nodes::Array{Tuple} = []
+    for block in blocks
+        text_nodes = transform_block_into_text_nodes(block)
+        push!(tuples_of_tag_and_text_nodes, (block.tag, text_nodes))
+    end
+
+    println(tuples_of_tag_and_text_nodes)
+
+#     textNodes = create_nodes_for_each_xml_block(blocks)
+#     println(textNodes)
+
+
     # de partities doen we later wel.
     #partitions = partition_block_into_groups(blocks)
     #println(partitions)
