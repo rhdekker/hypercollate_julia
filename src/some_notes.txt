@@ -9,3 +9,13 @@ Second we group the a tag a body of textual content and a tail together.
 This gives uniform items in the array.
 Then we want to group all the add and dels if they belong to the same subst
 To accomplish that we would need to keep track of the parent element when creating the xml blocks
+After we have the groups we can create nodes
+Then we can create edges
+
+
+
+
+Iterator tools can be found here:
+https://github.com/JuliaCollections/IterTools.jl
+
+The groupby (function) functionality can be used
