@@ -1,0 +1,11 @@
+
+
+What we want to do is take the content of an xml file and convert it into a directed acyclic graph
+For now we want to focus on the flow of the text, meaning: add's and del's and subst. Later on Sic and cor and choice?
+We want to create a uniform array of items out of the text centric xml file.
+We do this in two steps
+First we do a depth first traversal... this gives us an array of xml elements and text items.
+Second we group the a tag a body of textual content and a tail together.
+This gives uniform items in the array.
+Then we want to group all the add and dels if they belong to the same subst
+To accomplish that we would need to keep track of the parent element when creating the xml blocks
